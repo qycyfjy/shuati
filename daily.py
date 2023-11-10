@@ -4,6 +4,7 @@ from functools import reduce, cache
 from math import inf
 from collections import deque, defaultdict
 import heapq
+import bisect
 
 
 class Node:
@@ -21,6 +22,20 @@ class Node:
 
 
 class Solution:
+    # https://leetcode.cn/problems/successful-pairs-of-spells-and-potions
+    def successfulPairs(
+        self, spells: List[int], potions: List[int], success: int
+    ) -> List[int]:
+        potions.sort()
+        n = len(spells)
+        m = len(potions)
+        ans = [0] * n
+        for i, spell in enumerate(spells):
+            need = (success - 1) // spell
+            bound = bisect.bisect_right(potions, need)
+            ans[i] = m - bound
+        return ans
+
     # https://leetcode.cn/problems/smallest-string-with-swaps
     def smallestStringWithSwaps(self, s: str, pairs: List[List[int]]) -> str:
         n = len(s)
