@@ -22,6 +22,37 @@ class Node:
 
 
 class Solution:
+    # https://leetcode.cn/problems/couples-holding-hands
+    def minSwapsCouples(self, row: List[int]) -> int:
+        n = len(row) // 2
+        uf = list(range(n))
+        rank = [1] * n
+        gs = n
+
+        def union(a, b):
+            pa, pb = find(a), find(b)
+            if pa == pb:
+                return
+            if rank[pa] == rank[pb]:
+                uf[pa] = pb
+                rank[pb] += 1
+            elif rank[pa] < rank[pb]:
+                uf[pa] = pb
+            else:
+                uf[pb] = pa
+            nonlocal gs
+            gs -= 1
+
+        def find(x):
+            if uf[x] != x:
+                uf[x] = find(uf[x])
+            return uf[x]
+
+        for i in range(0, 2 * n, 2):
+            union(row[i] // 2, row[i + 1] // 2)
+
+        return n - gs
+
     # https://leetcode.cn/problems/successful-pairs-of-spells-and-potions
     def successfulPairs(
         self, spells: List[int], potions: List[int], success: int
@@ -467,4 +498,4 @@ class Solution:
 
 s = Solution()
 
-s.smallestStringWithSwaps("dcab", [[0, 3], [1, 2]])
+s.minSwapsCouples([9, 12, 2, 10, 11, 0, 13, 6, 4, 5, 3, 8, 1, 7])
