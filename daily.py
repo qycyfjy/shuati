@@ -7,6 +7,9 @@ import heapq
 import bisect
 
 
+from sortedcontainers import SortedDict
+
+
 class Node:
     def __init__(
         self,
@@ -496,6 +499,57 @@ class Solution:
         return ans
 
 
-s = Solution()
+class RangeModule:
+    def __init__(self):
+        self.ivs: SortedDict = SortedDict()
 
-s.minSwapsCouples([9, 12, 2, 10, 11, 0, 13, 6, 4, 5, 3, 8, 1, 7])
+    def addRange(self, left: int, right: int) -> None:
+        idx = self.ivs.bisect_right(left)
+        if idx != 0:
+            prev = idx - 1
+            prev_left = self.ivs.keys()[prev]
+            prev_right = self.ivs.values()[prev]
+            if prev_right >= right:  # 包含
+                return
+            if prev_right >= left:  # pl left pr right 需要看情况更新pl对应的r
+                left = prev_left
+                self.ivs.popitem(prev)
+                idx -= 1
+        while idx < len(self.ivs) and self.ivs.keys()[idx] <= right:  # 之后所有区间的l都在r内
+            right = max(right, self.ivs.values()[idx])
+            self.ivs.popitem(idx)
+
+        self.ivs[left] = right
+
+    def queryRange(self, left: int, right: int) -> bool:
+        idx = self.ivs.bisect_right(left)
+        if idx == 0:
+            return False
+        return right <= self.ivs.values()[idx - 1]
+
+    def removeRange(self, left: int, right: int) -> None:
+        idx = self.ivs.bisect_right(left)
+        if idx != 0:
+            prev = idx - 1
+            prev_left = self.ivs.keys()[prev]
+            prev_right = self.ivs.values()[prev]
+            if prev_right >= right:
+                if prev_left == left:  # 左边界重合
+                    self.ivs.popitem(prev)
+                else:
+                    self.ivs[prev_left] = left
+                if right != prev_right:
+                    self.ivs[right] = prev_right
+            elif prev_right > left:  # pl left pr right
+                if prev_left == left:
+                    self.ivs.popitem(prev)
+                    idx -= 1
+                else:
+                    self.ivs[prev_left] = left
+        while idx < len(self.ivs) and self.ivs.keys()[idx] < right:
+            if self.ivs.values()[idx] <= right:
+                self.ivs.popitem(idx)
+            else:
+                self.ivs[right] = self.ivs.values()[idx]
+                self.ivs.popitem(idx)
+                break
