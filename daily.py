@@ -553,3 +553,34 @@ class RangeModule:
                 self.ivs[right] = self.ivs.values()[idx]
                 self.ivs.popitem(idx)
                 break
+
+
+class NumArray:
+    def __init__(self, nums: List[int]):
+        self.nums = nums
+        self.n = len(nums)
+        self.tree = [0] * (self.n + 1)
+        for i in range(self.n):
+            self.add(i + 1, nums[i])
+
+    def update(self, index: int, val: int) -> None:
+        self.add(index + 1, val - self.nums[index])
+        self.nums[index] = val
+
+    def sumRange(self, left: int, right: int) -> int:
+        return self.query(right + 1) - self.query(left)
+
+    def query(self, index):
+        ans = 0
+        while index > 0:
+            ans += self.tree[index]
+            index -= self.low_bit(index)
+        return ans
+
+    def add(self, index, value):
+        while index <= self.n:
+            self.tree[index] += value
+            index += self.low_bit(index)
+
+    def low_bit(self, x):
+        return x & -x
