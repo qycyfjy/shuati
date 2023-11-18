@@ -25,6 +25,26 @@ class Node:
 
 
 class Solution:
+    def test(self):
+        assert self.maximumSum([18, 43, 36, 13, 7]) == 54
+
+    # https://leetcode.cn/problems/max-sum-of-a-pair-with-equal-sum-of-digits
+    def maximumSum(self, nums: List[int]) -> int:
+        cache = {}
+        ans = -1
+        for num in nums:
+            digit_sum = 0
+            num_c = num
+            while num_c != 0:
+                digit_sum += num_c % 10
+                num_c //= 10
+            if digit_sum not in cache:
+                cache[digit_sum] = num
+            else:
+                ans = max(ans, num + cache[digit_sum])
+                cache[digit_sum] = max(num, cache[digit_sum])
+        return ans
+
     # https://leetcode.cn/problems/couples-holding-hands
     def minSwapsCouples(self, row: List[int]) -> int:
         n = len(row) // 2
@@ -584,3 +604,7 @@ class NumArray:
 
     def low_bit(self, x):
         return x & -x
+
+
+s = Solution()
+s.test()
