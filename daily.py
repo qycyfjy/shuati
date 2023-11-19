@@ -28,6 +28,34 @@ class Solution:
     def test(self):
         assert self.maximumSum([18, 43, 36, 13, 7]) == 54
 
+    def maxSumOfThreeSubarrays(self, nums: List[int], k: int) -> List[int]:
+        ans = []
+        n = len(nums)
+        if n < 3 * k:
+            return ans
+        sub1_sum, sub1_max, sub1_idx = 0, 0, 0
+        sub2_sum, sub12_max, sub12_idx = 0, 0, ()
+        sub3_sum, sub123_max = 0, 0
+        for i in range(k * 2, n):
+            sub1_sum += nums[i - k * 2]
+            sub2_sum += nums[i - k]
+            sub3_sum += nums[i]
+            if i >= k * 3 - 1:
+                if sub1_sum > sub1_max:
+                    sub1_max = sub1_sum
+                    sub1_idx = i - k * 3 + 1
+                if sub1_max + sub2_sum > sub12_max:
+                    sub12_max = sub1_max + sub2_sum
+                    sub12_idx = (sub1_idx, i - k * 2 + 1)
+                if sub12_max + sub3_sum > sub123_max:
+                    sub123_max = sub12_max + sub3_sum
+                    ans = [*sub12_idx, i - k + 1]
+                sub1_sum -= nums[i - k * 3 + 1]
+                sub2_sum -= nums[i - k * 2 + 1]
+                sub3_sum -= nums[i - k + 1]
+
+        return ans
+
     # https://leetcode.cn/problems/max-sum-of-a-pair-with-equal-sum-of-digits
     def maximumSum(self, nums: List[int]) -> int:
         cache = {}
