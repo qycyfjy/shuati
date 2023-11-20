@@ -28,6 +28,31 @@ class Solution:
     def test(self):
         assert self.maximumSum([18, 43, 36, 13, 7]) == 54
 
+    def minDeletion(self, nums: List[int]) -> int:
+        n = len(nums)
+        ans = 0
+        normal = True
+        for i in range(n - 1):
+            if normal and i % 2 == 0:
+                if nums[i] == nums[i + 1]:
+                    ans += 1
+                    normal = False
+            elif not normal and i % 2 == 1:
+                if nums[i] == nums[i + 1]:
+                    ans += 1
+                    normal = True
+        if (n - ans) % 2 != 0:
+            ans += 1
+        return ans
+
+    def maxSubArray(self, nums: List[int]) -> int:
+        n = len(nums)
+        dp = [0] * n
+        dp[0] = nums[0]
+        for i in range(1, n):
+            dp[i] = max(dp[i - 1] + nums[i], nums[i])
+        return max(dp)
+
     def maxSumOfThreeSubarrays(self, nums: List[int], k: int) -> List[int]:
         ans = []
         n = len(nums)
