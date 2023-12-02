@@ -28,6 +28,40 @@ class Solution:
     def test(self):
         assert self.maximumSum([18, 43, 36, 13, 7]) == 54
 
+    def carPooling(self, trips: List[List[int]], capacity: int) -> bool:
+        trips.sort(key=lambda t: t[1])
+        pq = []
+        passengers = 0
+        for n, f, t in trips:
+            while len(pq) != 0 and pq[0][0] <= f:
+                passengers -= pq[0][1]
+                heapq.heappop(pq)
+            if passengers + n > capacity:
+                return False
+            passengers += n
+            heapq.heappush(pq, (t, n))
+        return True
+
+    def firstCompleteIndex(self, arr: List[int], mat: List[List[int]]) -> int:
+        m = len(mat)
+        n = len(mat[0])
+
+        pos = {}
+        for i in range(m):
+            for j in range(n):
+                pos[mat[i][j]] = (i, j)
+
+        row_count = [0] * m
+        col_count = [0] * n
+        for i, num in enumerate(arr):
+            x, y = pos[num]
+            row_count[x] += 1
+            col_count[y] += 1
+            if row_count[x] == n or col_count[y] == m:
+                return i
+
+        return 0
+
     def minDeletion(self, nums: List[int]) -> int:
         n = len(nums)
         ans = 0
