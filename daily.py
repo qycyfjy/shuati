@@ -28,6 +28,37 @@ class Solution:
     def test(self):
         assert self.maximumSum([18, 43, 36, 13, 7]) == 54
 
+    def minimumFuelCost(self, roads: List[List[int]], seats: int) -> int:
+        n = len(roads) + 1
+        G = [[] for _ in range(n)]
+        for a, b in roads:
+            G[a].append(b)
+            G[b].append(a)
+        ans = 0
+
+        def dfs(init, prev):
+            nonlocal ans
+            p = 1
+            for neighbor in G[init]:
+                if neighbor != prev:
+                    np = dfs(neighbor, init)
+                    p += np
+                    ans += (np + seats - 1) // seats
+            return p
+
+        dfs(0, -1)
+        return ans
+
+    def maxScore(self, cardPoints: List[int], k: int) -> int:
+        n = len(cardPoints)
+        presum = [0] * (n + 1)
+        for i in range(n):
+            presum[i + 1] = presum[i] + cardPoints[i]
+        rest = presum[n] + 1
+        for i in range(k + 1):
+            rest = min(rest, presum[n - k + i] - presum[i])
+        return presum[n] - rest
+
     def carPooling(self, trips: List[List[int]], capacity: int) -> bool:
         trips.sort(key=lambda t: t[1])
         pq = []
