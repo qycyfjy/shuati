@@ -26,7 +26,45 @@ class Node:
 
 class Solution:
     def test(self):
-        assert self.maximumSum([18, 43, 36, 13, 7]) == 54
+        assert self.minimumTotalPrice(
+            4, [[0, 1], [1, 2], [1, 3]], [2, 2, 10, 6], [[0, 3], [2, 1], [2, 3]]
+        )
+
+    def minimumTotalPrice(
+        self, n: int, edges: List[List[int]], price: List[int], trips: List[List[int]]
+    ) -> int:
+        G = [[] for _ in range(n)]
+        for a, b in edges:
+            G[a].append(b)
+            G[b].append(a)
+
+        visitCount = [0] * n
+
+        def dfs(cur, prev, to):
+            if cur == to:
+                visitCount[cur] += 1
+                return True
+            for neighbor in G[cur]:
+                if neighbor != prev:
+                    if dfs(neighbor, cur, to):
+                        visitCount[cur] += 1
+                        return True
+            return False
+
+        for trip_start, trip_end in trips:
+            dfs(trip_start, -1, trip_end)
+
+        def dfs_rob(cur, prev):
+            no = price[cur] * visitCount[cur]
+            yes = no // 2
+            for neighbor in G[cur]:
+                if neighbor != prev:
+                    cno, cyes = dfs_rob(neighbor, cur)
+                    no += min(cno, cyes)
+                    yes += cno
+            return (no, yes)
+
+        return min(dfs_rob(0, -1))
 
     def minimumFuelCost(self, roads: List[List[int]], seats: int) -> int:
         n = len(roads) + 1
