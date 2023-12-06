@@ -30,6 +30,21 @@ class Solution:
             4, [[0, 1], [1, 2], [1, 3]], [2, 2, 10, 6], [[0, 3], [2, 1], [2, 3]]
         )
 
+    def minReorder(self, n: int, connections: List[List[int]]) -> int:
+        G = [[] for _ in range(n)]
+        for a, b in connections:
+            G[a].append((b, True))
+            G[b].append((a, False))
+        ans = 0
+        def dfs(cur, prev):
+            nonlocal ans
+            for nxt, dirTo in G[cur]:
+                if nxt != prev:
+                    if dirTo:
+                        ans += 1
+                    dfs(nxt, cur)
+        dfs(0, -1)
+
     def minimumTotalPrice(
         self, n: int, edges: List[List[int]], price: List[int], trips: List[List[int]]
     ) -> int:
