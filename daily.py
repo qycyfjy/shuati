@@ -26,9 +26,21 @@ class Node:
 
 class Solution:
     def test(self):
-        assert self.minimumTotalPrice(
-            4, [[0, 1], [1, 2], [1, 3]], [2, 2, 10, 6], [[0, 3], [2, 1], [2, 3]]
+        assert self.maxTaxiEarnings(
+            20,
+            [[1, 6, 1], [3, 10, 2], [10, 12, 3], [11, 12, 2], [12, 15, 2], [13, 18, 1]],
         )
+
+    def maxTaxiEarnings(self, n: int, rides: List[List[int]]) -> int:
+        groupByEnd: defaultdict[int, List[Tuple[int, int]]] = defaultdict(list)
+        for s, e, t in rides:
+            groupByEnd[e].append((s, t))
+        dp = [0] * (n + 1)
+        for end in range(1, n + 1):
+            dp[end] = dp[end - 1]
+            for s, t in groupByEnd[end]:
+                dp[end] = max(dp[end], dp[s] + end - s + t)
+        return max(dp)
 
     def minReorder(self, n: int, connections: List[List[int]]) -> int:
         G = [[] for _ in range(n)]
@@ -36,6 +48,7 @@ class Solution:
             G[a].append((b, True))
             G[b].append((a, False))
         ans = 0
+
         def dfs(cur, prev):
             nonlocal ans
             for nxt, dirTo in G[cur]:
@@ -43,6 +56,7 @@ class Solution:
                     if dirTo:
                         ans += 1
                     dfs(nxt, cur)
+
         dfs(0, -1)
 
     def minimumTotalPrice(
