@@ -26,10 +26,59 @@ class Node:
 
 class Solution:
     def test(self):
-        assert self.maxTaxiEarnings(
-            20,
-            [[1, 6, 1], [3, 10, 2], [10, 12, 3], [11, 12, 2], [12, 15, 2], [13, 18, 1]],
-        )
+        assert self.nextBeautifulNumber(21)
+
+    # https://leetcode.cn/problems/path-with-minimum-effort/
+    def minimumEffortPath(self, heights: List[List[int]]) -> int:
+        m = len(heights)
+        n = len(heights[0])
+        G = []
+        for i in range(m):
+            for j in range(n):
+                p = i * n + j
+                if i < m - 1:
+                    G.append((p, p + n, abs(heights[i][j] - heights[i + 1][j])))
+                if j < n - 1:
+                    G.append((p, p + 1, abs(heights[i][j] - heights[i][j + 1])))
+        G.sort(key=lambda x: x[2])
+
+        uf = list(range(m * n))
+
+        def find(x):
+            if uf[x] != x:
+                uf[x] = find(uf[x])
+            return uf[x]
+
+        def union(x, y):
+            i = find(x)
+            j = find(y)
+            uf[i] = j
+
+        for a, b, c in G:
+            union(a, b)
+            if find(0) == find(m * n - 1):
+                return c
+
+        return 0
+
+    def nextBeautifulNumber(self, n: int) -> int:
+        def check(x) -> bool:
+            count = [0] * 7
+            while x != 0:
+                v = x % 10
+                if v > 6 or count[v] >= v:
+                    return False
+                count[v] += 1
+                x //= 10
+            for i, c in enumerate(count):
+                if c != 0 and c != i:
+                    return False
+            return True
+
+        for i in range(n + 1, 10**7):
+            if check(i):
+                return i
+        return -1
 
     def maxTaxiEarnings(self, n: int, rides: List[List[int]]) -> int:
         groupByEnd: defaultdict[int, List[Tuple[int, int]]] = defaultdict(list)
