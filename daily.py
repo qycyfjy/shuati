@@ -26,7 +26,23 @@ class Node:
 
 class Solution:
     def test(self):
-        assert self.nextBeautifulNumber(21)
+        assert self.secondGreaterElement([2,4,0,9,6])
+
+    def secondGreaterElement(self, nums: List[int]) -> List[int]:
+        n = len(nums)
+        ans = [-1] * n
+        stk1 = []
+        stk2 = []
+        for i, num in enumerate(nums):
+            while len(stk2) != 0 and nums[stk2[-1]] < num:
+                ans[stk2.pop()] = num
+            j = len(stk1) - 1
+            while j >= 0 and nums[stk1[j]] < num:
+                j -= 1
+            stk2 += stk1[j+1:]
+            del stk1[j+1:]
+            stk1.append(i)
+        return ans
 
     # https://leetcode.cn/problems/path-with-minimum-effort/
     def minimumEffortPath(self, heights: List[List[int]]) -> int:
