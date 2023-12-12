@@ -26,7 +26,21 @@ class Node:
 
 class Solution:
     def test(self):
-        assert self.secondGreaterElement([2,4,0,9,6])
+        assert self.secondGreaterElement([2, 4, 0, 9, 6])
+
+    def makeSmallestPalindrome(self, s: str) -> str:
+        chars = list(s)
+        l, r = 0, len(s) - 1
+        while l < r:
+            o_l = ord(chars[l])
+            o_r = ord(chars[r])
+            if o_l < o_r:
+                chars[r] = chars[l]
+            elif o_l > o_r:
+                chars[l] = chars[r]
+            l += 1
+            r -= 1
+        return "".join(chars)
 
     def secondGreaterElement(self, nums: List[int]) -> List[int]:
         n = len(nums)
@@ -39,8 +53,8 @@ class Solution:
             j = len(stk1) - 1
             while j >= 0 and nums[stk1[j]] < num:
                 j -= 1
-            stk2 += stk1[j+1:]
-            del stk1[j+1:]
+            stk2 += stk1[j + 1 :]
+            del stk1[j + 1 :]
             stk1.append(i)
         return ans
 
